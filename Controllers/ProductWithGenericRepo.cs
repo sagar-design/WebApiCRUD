@@ -16,22 +16,26 @@ namespace RepositoryPatternCrudEFCore.Controllers
             _productRepository = productRepository;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get()
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAll()
         {
             var products = await _productRepository.GetAllAsync();
             return Ok(products);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetById/{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var products = await _productRepository.GetByIdAsync(id);
-            return Ok(products);
+            var product = await _productRepository.GetByIdAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+            return Ok(product);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ProductRequest product)
+        [HttpPost("Create")]
+        public async Task<IActionResult> Create([FromBody] ProductRequest product)
         {
             var productEntity = new Product()
             {
@@ -43,8 +47,8 @@ namespace RepositoryPatternCrudEFCore.Controllers
             return CreatedAtAction(nameof(GetById), new { id = createdProductResponse.ProductId }, createdProductResponse);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] ProductRequest product)
+        [HttpPut("Update/{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] ProductRequest product)
         {
             var productEntity = await _productRepository.GetByIdAsync(id);
             if (productEntity == null)
@@ -57,18 +61,16 @@ namespace RepositoryPatternCrudEFCore.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")]
-        public async  Task<IActionResult> Delete(int id)
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
             var product = await _productRepository.GetByIdAsync(id);
             if (product == null)
             {
                 return NotFound();
-
             }
             await _productRepository.DeleteAsync(product);
             return NoContent();
-
         }
     }
 }
