@@ -1,0 +1,6 @@
+@RepositoryPatternCrudEFCore_HostAddress = http://localhost:5217
+
+GET {{RepositoryPatternCrudEFCore_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
